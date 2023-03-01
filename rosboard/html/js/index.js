@@ -57,6 +57,8 @@ setInterval(() => {
   }
 }, 5000);
 
+
+
 function updateStoredSubscriptions() {
   if(window.localStorage) {
     let storedSubscriptions = {};
@@ -71,7 +73,7 @@ function updateStoredSubscriptions() {
 
 function newCard() {
   // creates a new card, adds it to the grid, and returns it.
-  let card = $("<div></div>").addClass('card')
+  let card = $("<div style='width: 100%'></div>").addClass('card')
     .appendTo($('.grid'));
   return card;
 }
