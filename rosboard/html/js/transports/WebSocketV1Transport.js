@@ -1,11 +1,12 @@
 class WebSocketV1Transport {
-    constructor({path, onOpen, onClose, onRosMsg, onTopics, onSystem}) {
+    constructor({path, onOpen, onClose, onRosMsg, onTopics, onSystem, onPrefixedCard}) {
       this.path = path;
       this.onOpen = onOpen ? onOpen.bind(this) : null;
       this.onClose = onClose ? onClose.bind(this) : null;
       this.onMsg = onMsg ? onMsg.bind(this) : null;
       this.onTopics = onTopics ? onTopics.bind(this) : null;
       this.onSystem = onSystem ? onSystem.bind(this) : null;
+      this.onPrefixedCard = onPrefixedCard ? onPrefixedCard.bind(this) : null;
       this.ws = null;
       this.joystickX = 0.0;
       this.joystickY = 0.0;
@@ -19,9 +20,16 @@ class WebSocketV1Transport {
   
       this.ws = new WebSocket(abspath);
   
+      // this.ws.onopen = function(){
+      //   console.log("connected");
+      //   // console.log("that", that.onPrefixedCard(that))
+      //   // if(that.onPrefixedCard) that.onPrefixedCard(that);
+      //   if(that.onOpen) that.onOpen(that);
+      // }
+
       this.ws.onopen = function(){
         console.log("connected");
-        if(that.onOpen) that.onOpen(that);
+        if(that.onPrefixedCard) that.onPrefixedCard(that);
       }
       
       this.ws.onclose = function(){

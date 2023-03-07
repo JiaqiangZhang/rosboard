@@ -73,9 +73,23 @@ function updateStoredSubscriptions() {
 
 function newCard() {
   // creates a new card, adds it to the grid, and returns it.
-  let card = $("<div style='width: 100%'></div>").addClass('card')
+  let card = $("<div style='width: 40%'></div>").addClass('card')
     .appendTo($('.grid'));
   return card;
+}
+
+// add prefixed card
+let onPrefixedCard = function() {
+  let preSubscriptions = {
+    "/camera/rgb/image_raw": { topicType: "sensor_msgs/Image" }, 
+    "/camera/depth/points": { topicType: "sensor_msgs/PointCloud2" }, 
+  };
+  // console.log("preSubscriptions", preSubscriptions);
+
+  for(let topic_name in preSubscriptions){
+    // console.log("topic_name", topic_name)
+    initSubscribe({topicName: topic_name, topicType: preSubscriptions[topic_name].topicType});
+  }
 }
 
 let onOpen = function() {
@@ -224,6 +238,7 @@ function initDefaultTransport() {
     onMsg: onMsg,
     onTopics: onTopics,
     onSystem: onSystem,
+    onPrefixedCard: onPrefixedCard,
   });
   currentTransport.connect();
 }
