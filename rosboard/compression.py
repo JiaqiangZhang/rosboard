@@ -237,7 +237,8 @@ DATATYPE_MAPPING_PCL2_NUMPY = {
     8: np.float64,
 }
 
-def compress_point_cloud2(msg, output):
+def compress_point_cloud2(msg, output, sample_size = 65535):
+    # sample_size (int): custom sample size, default 65535
     # assuming fields are ('x', 'y', 'z', ...),
     # compression scheme is:
     # msg['_data_uint16'] = {
@@ -248,6 +249,13 @@ def compress_point_cloud2(msg, output):
     # i.e. we are encoding all the floats as uint16 values where 0 represents the min value in the entire dataset and
     # 65535 represents the max value in the dataset, and bounds: [...] holds information on those bounds so the
     # client can decode back to a float
+
+    ### EDIT: CUSTOM COMPRESSION
+    # choose point cloud sample size
+
+    if (sample_size < 0):
+        output["_warn"] = "sample size < 0, set to default 65535"
+        sample_size = 65535
 
     output["data"] = []
     output["__comp"] = ["data"]
@@ -268,9 +276,9 @@ def compress_point_cloud2(msg, output):
     except AssertionError as e:
         output["_error"] = "PointCloud2 error: %s" % str(e)
     
-    if points.size > 65536:
-        output["_warn"] = "Point cloud too large, randomly subsampling to 65536 points."
-        idx = np.random.randint(points.size, size=65536)
+    if points.size > sample_size:
+        output["_warn"] = "Point cloud too large, randomly subsampling to sample_size points."
+        idx = np.random.randint(points.size, size=sample_size)
         points = points[idx]
 
     xpoints = points['x'].astype(np.float32)
