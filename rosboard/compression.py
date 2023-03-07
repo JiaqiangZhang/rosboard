@@ -28,31 +28,33 @@ def decode_jpeg(input_bytes):
         return np.asarray(Image.open(io.BytesIO(input_bytes)))
 
 def encode_jpeg(img):
+    # use img_quality to change image quality between 0 and 100
+    img_quality = 50
     if simplejpeg:
         if len(img.shape) == 2:
             img = np.expand_dims(img, axis=2)
             if not img.flags['C_CONTIGUOUS']:
                 img = img.copy(order='C')
-            return simplejpeg.encode_jpeg(img, colorspace = "GRAY", quality = 50)
+            return simplejpeg.encode_jpeg(img, colorspace = "GRAY", quality = img_quality)
         elif len(img.shape) == 3:
             if not img.flags['C_CONTIGUOUS']:
                 img = img.copy(order='C')
             if img.shape[2] == 1:
-                return simplejpeg.encode_jpeg(img, colorspace = "GRAY", quality = 50)
+                return simplejpeg.encode_jpeg(img, colorspace = "GRAY", quality = img_quality)
             elif img.shape[2] == 4:
-                return simplejpeg.encode_jpeg(img, colorspace = "RGBA", quality = 50)
+                return simplejpeg.encode_jpeg(img, colorspace = "RGBA", quality = img_quality)
             elif img.shape[2] == 3:
-                return simplejpeg.encode_jpeg(img, colorspace = "RGB", quality = 50)
+                return simplejpeg.encode_jpeg(img, colorspace = "RGB", quality = img_quality)
         else:
             return b''
     elif cv2:
         if len(img.shape) == 3 and img.shape[2] == 3:
             img = img[:,:,::-1]
-        return cv2.imencode('.jpg', img, [cv2.IMWRITE_JPEG_QUALITY, 50])[1].tobytes()
+        return cv2.imencode('.jpg', img, [cv2.IMWRITE_JPEG_QUALITY, img_quality])[1].tobytes()
     elif PIL:
         pil_img = Image.fromarray(img)
         buffered = io.BytesIO()
-        pil_img.save(buffered, format="JPEG", quality = 50)    
+        pil_img.save(buffered, format="JPEG", quality = img_quality)    
         return buffered.getvalue()
 
 _PCL2_DATATYPES_NUMPY_MAP = {
