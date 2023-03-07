@@ -279,7 +279,7 @@ def compress_point_cloud2(msg, output, sample_size = 65535):
         output["_error"] = "PointCloud2 error: %s" % str(e)
     
     if points.size > sample_size:
-        output["_warn"] = "Point cloud too large, randomly subsampling to sample_size points."
+        output["_warn"] = "Point cloud too large, randomly subsampling to {} points.".format(sample_size)
         idx = np.random.randint(points.size, size=sample_size)
         points = points[idx]
 
