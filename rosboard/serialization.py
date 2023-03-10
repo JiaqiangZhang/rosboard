@@ -38,7 +38,7 @@ def ros2dict(msg):
         if (msg.__module__ == "sensor_msgs.msg._Image" or \
             msg.__module__ == "sensor_msgs.msg._image") \
             and field == "data":
-            rosboard.compression.compress_image(msg, output)
+            rosboard.compression.compress_image(msg, output, max_height=800, max_width=800)
             continue
 
         # OccupancyGrid: render and compress to jpeg

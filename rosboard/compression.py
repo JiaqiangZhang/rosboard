@@ -2,7 +2,7 @@ import base64
 import io
 import numpy as np
 from rosboard.cv_bridge import imgmsg_to_cv2
-
+import time
 try:
     import simplejpeg
 except ImportError:
@@ -152,9 +152,8 @@ def compress_compressed_image(msg, output):
         output["_error"] = "Error: %s" % str(e)
     output["_data_jpeg"] = base64.b64encode(img_jpeg).decode()
     output["_data_shape"] = list(original_shape)
-            
 
-def compress_image(msg, output):
+def compress_image(msg, output, max_heigh = 800, max_width = 800):
     output["data"] = []
     output["__comp"] = ["data"]
 
@@ -175,8 +174,9 @@ def compress_image(msg, output):
         cv2_img = np.stack((cv2_img[:,:,0], cv2_img[:,:,1], np.zeros(cv2_img[:,:,0].shape)), axis = -1)
 
     # enforce <800px max dimension, and do a stride-based resize
-    if cv2_img.shape[0] > 800 or cv2_img.shape[1] > 800:
-        stride = int(np.ceil(max(cv2_img.shape[0] / 800.0, cv2_img.shape[1] / 800.0)))
+    # Edit: choose a smaller dimension for quicker encoding and larger dimension vice versa.
+    if cv2_img.shape[0] > max_heigh or cv2_img.shape[1] > max_width:
+        stride = int(np.ceil(max(cv2_img.shape[0] / max_heigh*1.0, cv2_img.shape[1] / max_width*1.0)))
         cv2_img = cv2_img[::stride,::stride]
     
     # if image format isn't already uint8, make it uint8 for visualization purposes
@@ -195,8 +195,13 @@ def compress_image(msg, output):
             cv2_img = np.clip(cv2_img * 255, 0, 255).astype(np.uint8)
 
     try:
+        start = time.time()
         img_jpeg = encode_jpeg(cv2_img)
+        
+        end = time.time()
+        output["_warn"] = "encodejpeg elapsed = " + str(end - start) + "sec"
         output["_data_jpeg"] = base64.b64encode(img_jpeg).decode()
+        output["_warn"] += "\nlength of encoded jpeg string = " + str(len(base64.b64encode(img_jpeg).decode()))
         output["_data_shape"] = original_shape
     except OSError as e:
         output["_error"] = str(e)    
@@ -223,7 +228,10 @@ def compress_occupancy_grid(msg, output):
     except Exception as e:
         output["_error"] = str(e)
     try:
+        start = time.time()
         img_jpeg = encode_jpeg(cv2_img)
+        end = time.time()
+        output["_warn"] = (end - start)
         output["_data_jpeg"] = base64.b64encode(img_jpeg).decode()
     except OSError as e:
         output["_error"] = str(e)
