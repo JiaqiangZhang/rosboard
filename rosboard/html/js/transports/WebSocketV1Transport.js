@@ -98,3 +98,4 @@ class WebSocketV1Transport {
   WebSocketV1Transport.PONG_TIME = "t";
 
   WebSocketV1Transport.JOY_MSG = "j";
+  WebSocketV1Transport.IMG_QUALITY = "i";

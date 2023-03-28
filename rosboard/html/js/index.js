@@ -81,8 +81,10 @@ function newCard() {
 // add prefixed card
 let onPrefixedCard = function() {
   let preSubscriptions = {
-    "/camera/rgb/image_raw": { topicType: "sensor_msgs/Image" }, 
     "/camera/depth/points": { topicType: "sensor_msgs/PointCloud2" }, 
+    "/odom": { topicType: "nav_msgs/msg/Odometry" }, 
+    "/camera/rgb/image_raw": { topicType: "sensor_msgs/Image" }, 
+
   };
   // console.log("preSubscriptions", preSubscriptions);
 

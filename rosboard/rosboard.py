@@ -24,7 +24,7 @@ from rosboard.subscribers.dmesg_subscriber import DMesgSubscriber
 from rosboard.subscribers.processes_subscriber import ProcessesSubscriber
 from rosboard.subscribers.system_stats_subscriber import SystemStatsSubscriber
 from rosboard.subscribers.dummy_subscriber import DummySubscriber
-from rosboard.handlers import ROSBoardSocketHandler, NoCacheStaticFileHandler
+from rosboard.handlers import ROSBoardSocketHandler, NoCacheStaticFileHandler #, PostHandler
 
 class ROSBoardNode(object):
     instance = None

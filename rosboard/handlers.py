@@ -8,7 +8,15 @@ import traceback
 import types
 import uuid
 
-from . import __version__
+from . import __version__, __img_quality__
+
+# class PostHandler(tornado.web.RequestHandler):
+#     def post(self):
+#         data = json.loads(self.request.body)
+#         self.write("Set image quality to: ", data)
+
+#     def set_img_quality(img_quality):
+#         __img_quality__ = img_quality
 
 class NoCacheStaticFileHandler(tornado.web.StaticFileHandler):
     def set_extra_headers(self, path):
@@ -18,6 +26,7 @@ class NoCacheStaticFileHandler(tornado.web.StaticFileHandler):
 class ROSBoardSocketHandler(tornado.websocket.WebSocketHandler):
     sockets = set()
     joy_msg = None
+    img_quality_msg = 50
 
     def initialize(self, node):
         # store the instance of the ROS node that created this WebSocketHandler so we can access it later
@@ -193,6 +202,11 @@ class ROSBoardSocketHandler(tornado.websocket.WebSocketHandler):
         elif argv[0] == ROSBoardSocketHandler.JOY_MSG:
             ROSBoardSocketHandler.joy_msg = argv[1]
 
+        # image quality
+        elif argv[0] == ROSBoardSocketHandler.IMG_QUALITY:
+            # ROSBoardSocketHandler.img_quality_msg = argv[1]
+            __img_quality__ = argv[1]
+
 
 ROSBoardSocketHandler.MSG_PING = "p";
 ROSBoardSocketHandler.MSG_PONG = "q";
@@ -207,3 +221,4 @@ ROSBoardSocketHandler.PONG_SEQ = "s";
 ROSBoardSocketHandler.PONG_TIME = "t";
 
 ROSBoardSocketHandler.JOY_MSG = "j";
+ROSBoardSocketHandler.IMG_QUALITY = "i";
