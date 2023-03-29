@@ -44,7 +44,8 @@ let $grid = null;
 $(() => {
   $grid = $('.grid').masonry({
     itemSelector: '.card',
-    gutter: 10,
+    gutter: 0,
+    columnWidth: '.grid-sizer',
     percentPosition: true,
   });
   $grid.masonry("layout");
@@ -71,10 +72,35 @@ function updateStoredSubscriptions() {
   }
 }
 
-function newCard() {
-  // creates a new card, adds it to the grid, and returns it.
-  let card = $("<div style='width: 40%'></div>").addClass('card')
-    .appendTo($('.grid'));
+function newCard({topicName, topicType}) {
+  var card = null; //document.createElement('div');
+  // creates a new card, adds it to the grid, and returns it.   style='width: 40%'
+  // let card = $("<div></div>").addClass('card')
+  //       .appendTo($('.grid'));
+  console.log("topicType", topicType)
+  if(topicType == "sensor_msgs/PointCloud2"){
+    // card.className = 'card-pc'
+    card = $("<div class='card card--width2'></div>")//.appendTo($('.grid'));//.addClass('card-pc')
+        // .appendTo($('.grid'));
+    console.log("pc card", card)
+  }
+  else if(topicType == "nav_msgs/msg/Odometry"){
+    card = $("<div class='card card--width3'></div>")//.appendTo($('.grid'));//.addClass('card-odom')
+        // .appendTo($('.grid'));  card-odom--width
+        console.log("odom card", card)
+  }
+  else if(topicType == "sensor_msgs/Image"){
+    card = $("<div class='card card--width3'></div>")//.appendTo($('.grid'));//.addClass('card-img')
+        // .appendTo($('.grid'));  card-img--width
+        console.log("img card", card)
+  }
+  else{
+    card = $("<div class='card'></div>")//.appendTo($('.grid'));//.addClass('card-pc')
+        // .appendTo($('.grid'));  card-pc--width
+        console.log("else card", card)
+  }
+  card = card.appendTo($('.grid'))
+  
   return card;
 }
 
@@ -84,6 +110,11 @@ let onPrefixedCard = function() {
     "/camera/depth/points": { topicType: "sensor_msgs/PointCloud2" }, 
     "/odom": { topicType: "nav_msgs/msg/Odometry" }, 
     "/camera/rgb/image_raw": { topicType: "sensor_msgs/Image" }, 
+    "/camera/rgb/image_raw1": { topicType: "sensor_msgs/Image" }, 
+    "/camera/rgb/image_raw2": { topicType: "sensor_msgs/Image" }, 
+    "/camera/rgb/image_raw3": { topicType: "sensor_msgs/Image" }, 
+    "/camera/rgb/image_raw4": { topicType: "sensor_msgs/Image" }, 
+    "/camera/rgb/image_raw5": { topicType: "sensor_msgs/Image" }, 
 
   };
   // console.log("preSubscriptions", preSubscriptions);
@@ -217,7 +248,8 @@ function initSubscribe({topicName, topicType}) {
   }  
   currentTransport.subscribe({topicName: topicName});
   if(!subscriptions[topicName].viewer) {
-    let card = newCard();
+    console.log('initSubscribe topicType', topicType)
+    let card = newCard({topicName, topicType});
     let viewer = Viewer.getDefaultViewerForType(topicType);
     try {
       subscriptions[topicName].viewer = new viewer(card, topicName, topicType);
