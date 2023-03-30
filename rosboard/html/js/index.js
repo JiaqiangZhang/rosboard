@@ -80,17 +80,17 @@ function newCard({topicName, topicType}) {
   console.log("topicType", topicType)
   if(topicType == "sensor_msgs/PointCloud2"){
     // card.className = 'card-pc'
-    card = $("<div class='card card--width2'></div>")//.appendTo($('.grid'));//.addClass('card-pc')
+    card = $("<div class='card card--width-pc card--height-pc'></div>")//.appendTo($('.grid'));//.addClass('card-pc')
         // .appendTo($('.grid'));
     console.log("pc card", card)
   }
   else if(topicType == "nav_msgs/msg/Odometry"){
-    card = $("<div class='card card--width3'></div>")//.appendTo($('.grid'));//.addClass('card-odom')
+    card = $("<div class='card card--width-odom card--height-odom'></div>")//.appendTo($('.grid'));//.addClass('card-odom')
         // .appendTo($('.grid'));  card-odom--width
         console.log("odom card", card)
   }
   else if(topicType == "sensor_msgs/Image"){
-    card = $("<div class='card card--width3'></div>")//.appendTo($('.grid'));//.addClass('card-img')
+    card = $("<div class='card card--width-img card--height-img'></div>")//.appendTo($('.grid'));//.addClass('card-img')
         // .appendTo($('.grid'));  card-img--width
         console.log("img card", card)
   }

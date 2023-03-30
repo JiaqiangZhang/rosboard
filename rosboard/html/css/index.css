@@ -111,6 +111,12 @@ input, textarea, *[contenteditable=true] {
   background:#202020;
 }
 
+.float-button {
+  position: fixed;
+  bottom: 90px;
+  right: 50px;
+}
+
 /* .grid::after {
   content: '';
   display: block;
@@ -119,7 +125,7 @@ input, textarea, *[contenteditable=true] {
 
 .grid-sizer,
 .card {
-  width: 30%;
+  width: 20%;
 }
 
 .card {
@@ -134,8 +140,13 @@ input, textarea, *[contenteditable=true] {
   /* width:calc(100% - 10pt); */
 }
 
-.card--width2 { width:calc(60% - 10pt); }
-.card--width3 { width:calc(30% - 10pt); }
+.card--width-pc { width:calc(60% - 10pt); }
+.card--width-odom { width:calc(40% - 10pt); }
+.card--width-img { width:calc(20% - 10pt); }
+
+.card--height-pc { height:500px; }
+.card--height-odom { height:200px; }
+.card--height-img { height:200px; }
 
 .card-title {
   font-family:Titillium Web;
