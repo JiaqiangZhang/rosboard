@@ -153,7 +153,7 @@ def compress_compressed_image(msg, output):
     output["_data_jpeg"] = base64.b64encode(img_jpeg).decode()
     output["_data_shape"] = list(original_shape)
 
-def compress_image(msg, output, max_heigh = 800, max_width = 800):
+def compress_image(msg, output, max_height = 800, max_width = 800):
     output["data"] = []
     output["__comp"] = ["data"]
 
@@ -175,8 +175,8 @@ def compress_image(msg, output, max_heigh = 800, max_width = 800):
 
     # enforce <800px max dimension, and do a stride-based resize
     # Edit: choose a smaller dimension for quicker encoding and larger dimension vice versa.
-    if cv2_img.shape[0] > max_heigh or cv2_img.shape[1] > max_width:
-        stride = int(np.ceil(max(cv2_img.shape[0] / max_heigh*1.0, cv2_img.shape[1] / max_width*1.0)))
+    if cv2_img.shape[0] > max_height or cv2_img.shape[1] > max_width:
+        stride = int(np.ceil(max(cv2_img.shape[0] / max_height*1.0, cv2_img.shape[1] / max_width*1.0)))
         cv2_img = cv2_img[::stride,::stride]
     
     # if image format isn't already uint8, make it uint8 for visualization purposes
