@@ -111,16 +111,42 @@ input, textarea, *[contenteditable=true] {
   background:#202020;
 }
 
+.float-button {
+  position: fixed;
+  bottom: 90px;
+  right: 50px;
+}
+
+/* .grid::after {
+  content: '';
+  display: block;
+  clear: both;
+} */
+
+.grid-sizer,
+.card {
+  width: 20%;
+}
+
 .card {
   border-radius:5pt;
   overflow:hidden;
-  margin-left:20pt;
+  margin-left:5pt;
   margin-top:20pt;
   background:#303030;
   color:#c0c0c0;
   box-shadow:3pt 3pt 3pt rgba(0,0,0,0.2);
-  width:calc(100% - 40pt);
+  /* width:100%; */
+  /* width:calc(100% - 10pt); */
 }
+
+.card--width-pc { width:calc(60% - 10pt); }
+.card--width-odom { width:calc(40% - 10pt); }
+.card--width-img { width:calc(20% - 10pt); }
+
+.card--height-pc { height:500px; }
+.card--height-odom { height:200px; }
+.card--height-img { height:200px; }
 
 .card-title {
   font-family:Titillium Web;
@@ -153,6 +179,7 @@ input, textarea, *[contenteditable=true] {
 
 .card-buttons {
   position:absolute;
+  /* position:auto; */
   display:flex;
   top:0;
   right:5pt;
@@ -187,21 +214,21 @@ input, textarea, *[contenteditable=true] {
 @media screen and (min-width: 900px) {
   .card {
     display:inline-block;
-    width:calc(50% - 40pt);
+    /* width:calc(50% - 40pt); */
   }
 }
 
 @media screen and (min-width: 1200px) {
   .card {
     display:inline-block;
-    width:calc(33% - 40pt);
+    /* width:calc(33% - 40pt); */
   }
 }
 
 @media screen and (min-width: 1800px) {
   .card {
     display:inline-block;
-    width:calc(25% - 40pt);
+    /* width:calc(25% - 40pt); */
   }
 }
 
@@ -331,7 +358,7 @@ input, textarea, *[contenteditable=true] {
 
 /* width */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 20px;
 }
 
 /* Track */
