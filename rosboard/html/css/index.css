@@ -143,12 +143,12 @@ input, textarea, *[contenteditable=true] {
 .card--width-pc { width:calc(60% - 10pt); }
 .card--width-odom { width:calc(40% - 10pt); }
 .card--width-img { width:calc(20% - 10pt); }
-.card--width-state { width:calc(30% - 10pt); }
+.card--width-state { width:calc(25% - 10pt); }
 
 .card--height-pc { height:500px; }
 .card--height-odom { height:200px; }
 .card--height-img { height:200px; }
-.card--height-state { height: 400px; scroll-behavior: smooth;}
+.card--height-state { height: 600px; scroll-behavior: smooth;}
 
 .card-title {
   font-family:Titillium Web;

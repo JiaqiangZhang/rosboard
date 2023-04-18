@@ -101,9 +101,9 @@ class StatsViewer extends Viewer {
 StatsViewer.friendlyName = "Log view";
 
 StatsViewer.supportedTypes = [
-    "b1_legged_msgs/HighState",
     "rcl_interfaces/msg/Log",
     "rosgraph_msgs/msg/Log",
+    "rosboard_msgs/msg/SystemStats",
 ];
 
 Viewer.registerViewer(StatsViewer);
