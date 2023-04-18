@@ -29,7 +29,7 @@ def decode_jpeg(input_bytes):
 
 def encode_jpeg(img):
     # use img_quality to change image quality between 0 and 100
-    img_quality = 50
+    __img_quality__ = 50
     if simplejpeg:
         if len(img.shape) == 2:
             img = np.expand_dims(img, axis=2)

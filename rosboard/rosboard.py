@@ -236,7 +236,7 @@ class ROSBoardNode(object):
                                 {
                                     "_topic_name": topic_name, # special non-ros topics start with _
                                     "_topic_type": topic_type,
-                                    "_error": "Could not load message type '%s'. Are the .msg files for it source-bashed?" % topic_type,
+                                    "_error": "Could not load message '{}' of type '{}'. Are the .msg files for it source-bashed?".format(topic_name,topic_type),
                                 },
                             ]
                         )

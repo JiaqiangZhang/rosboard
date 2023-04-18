@@ -15,6 +15,7 @@ importJsOnce("js/viewers/DiagnosticViewer.js");
 importJsOnce("js/viewers/TimeSeriesPlotViewer.js");
 importJsOnce("js/viewers/PointCloud2Viewer.js");
 importJsOnce("js/viewers/JoystickController.js");
+importJsOnce("js/viewers/StatsViewer.js")
 
 // GenericViewer must be last
 importJsOnce("js/viewers/GenericViewer.js");
@@ -94,6 +95,10 @@ function newCard({topicName, topicType}) {
         // .appendTo($('.grid'));  card-img--width
         console.log("img card", card)
   }
+  else if(topicType == "unitree_legged_msgs/HighState"){
+    card = $("<div class='card card--width-state card--height-state'></div>")
+      console.log("state card", card)
+  }
   else{
     card = $("<div class='card'></div>")//.appendTo($('.grid'));//.addClass('card-pc')
         // .appendTo($('.grid'));  card-pc--width
@@ -107,15 +112,15 @@ function newCard({topicName, topicType}) {
 // add prefixed card
 let onPrefixedCard = function() {
   let preSubscriptions = {
-    "/camera/depth/points": { topicType: "sensor_msgs/PointCloud2" }, 
-    "/odom": { topicType: "nav_msgs/msg/Odometry" }, 
-    "/camera/rgb/image_raw": { topicType: "sensor_msgs/Image" }, 
-    "/camera/rgb/image_raw1": { topicType: "sensor_msgs/Image" }, 
-    "/camera/rgb/image_raw2": { topicType: "sensor_msgs/Image" }, 
-    "/camera/rgb/image_raw3": { topicType: "sensor_msgs/Image" }, 
-    "/camera/rgb/image_raw4": { topicType: "sensor_msgs/Image" }, 
-    "/camera/rgb/image_raw5": { topicType: "sensor_msgs/Image" }, 
-
+    // "/camera/depth/points": { topicType: "sensor_msgs/PointCloud2" }, 
+    // "/odom": { topicType: "nav_msgs/msg/Odometry" }, 
+    // "/camera/rgb/image_raw": { topicType: "sensor_msgs/Image" }, 
+    // "/camera/rgb/image_raw1": { topicType: "sensor_msgs/Image" }, 
+    // "/camera/rgb/image_raw2": { topicType: "sensor_msgs/Image" }, 
+    // "/camera/rgb/image_raw3": { topicType: "sensor_msgs/Image" }, 
+    // "/camera/rgb/image_raw4": { topicType: "sensor_msgs/Image" }, 
+    // "/camera/rgb/image_raw5": { topicType: "sensor_msgs/Image" }, 
+    "/high_state": { topicType: "unitree_legged_msgs/HighState"},
   };
   // console.log("preSubscriptions", preSubscriptions);
 
