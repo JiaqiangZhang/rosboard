@@ -144,11 +144,13 @@ input, textarea, *[contenteditable=true] {
 .card--width-odom { width:calc(40% - 10pt); }
 .card--width-img { width:calc(20% - 10pt); }
 .card--width-state { width:calc(25% - 10pt); }
+.card--width-highcmd { width:200px; }
 
 .card--height-pc { height:500px; }
 .card--height-odom { height:200px; }
 .card--height-img { height:200px; }
 .card--height-state { height: 600px; scroll-behavior: smooth;}
+.card--height-highcmd { height: 100px;}
 
 .card-title {
   font-family:Titillium Web;
@@ -205,6 +207,27 @@ input, textarea, *[contenteditable=true] {
   cursor:pointer;
 }
 
+#stand-up-button{
+  background-color: white; 
+  color: black; 
+  border: 2px solid #4CAF50;
+}
+
+#stand-up-button:hover{
+  background-color: #4CAF50;
+  color: white;
+}
+
+#sit-down-button{
+  background-color: white;
+  color: black;
+  border: 2px solid #555555;
+}
+
+#sit-down-button:hover{
+  background-color: #555555;
+  color: white;
+}
 .card-content {
   -webkit-transition: opacity 0.3s ease;
   -moz-transition: opacity 0.3s ease;

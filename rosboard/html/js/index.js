@@ -16,6 +16,8 @@ importJsOnce("js/viewers/TimeSeriesPlotViewer.js");
 importJsOnce("js/viewers/PointCloud2Viewer.js");
 importJsOnce("js/viewers/JoystickController.js");
 importJsOnce("js/viewers/StatsViewer.js")
+importJsOnce("js/viewers/HighStateViewer.js")
+importJsOnce("js/viewers/HighCmdViewer.js")
 
 // GenericViewer must be last
 importJsOnce("js/viewers/GenericViewer.js");
@@ -99,6 +101,10 @@ function newCard({topicName, topicType}) {
     card = $("<div class='card card--width-state card--height-state'></div>")
       console.log("state card", card)
   }
+  else if(topicType == "unitree_legged_msgs/HighCmd"){
+    card = $("<div class='card card--width-highcmd card--height-highcmd'></div>")
+      console.log("state card", card)
+  }
   else{
     card = $("<div class='card'></div>")//.appendTo($('.grid'));//.addClass('card-pc')
         // .appendTo($('.grid'));  card-pc--width
@@ -121,6 +127,7 @@ let onPrefixedCard = function() {
     // "/camera/rgb/image_raw4": { topicType: "sensor_msgs/Image" }, 
     // "/camera/rgb/image_raw5": { topicType: "sensor_msgs/Image" }, 
     "/high_state": { topicType: "unitree_legged_msgs/HighState"},
+    "/high_cmd": { topicType: "unitree_legged_msgs/HighCmd"},
   };
   // console.log("preSubscriptions", preSubscriptions);
 

@@ -18,6 +18,7 @@ else:
 
 from geometry_msgs.msg import Twist
 from rosgraph_msgs.msg import Log
+from unitree_legged_msgs.msg import HighCmd
 
 from rosboard.serialization import ros2dict
 from rosboard.subscribers.dmesg_subscriber import DMesgSubscriber
@@ -60,6 +61,8 @@ class ROSBoardNode(object):
 
         self.twist_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=100)
 
+        self.highcmd_pub = rospy.Publisher('/high_cmd', HighCmd, queue_size=1)
+
         tornado_settings = {
             'debug': True,
             'static_path': os.path.join(os.path.dirname(os.path.realpath(__file__)), 'html')
@@ -96,6 +99,9 @@ class ROSBoardNode(object):
 
         # loop to send client joy message to ros topic
         threading.Thread(target = self.joy_loop, daemon = True).start()
+
+        # loop to send command message to ros topic /high_cmd
+        threading.Thread(target = self.highcmd_loop, daemon = True).start()
 
         self.lock = threading.Lock()
 
@@ -141,6 +147,20 @@ class ROSBoardNode(object):
                 twist.linear.x = -float(ROSBoardSocketHandler.joy_msg['y']) * 3.0
                 twist.angular.z = -float(ROSBoardSocketHandler.joy_msg['x']) * 2.0
             self.twist_pub.publish(twist)
+
+    def highcmd_loop(self):
+        """
+        Sending HighCmd message from client
+        """
+        highcmd = HighCmd()
+        while True:
+            time.sleep(0.1)
+            if not isinstance(ROSBoardSocketHandler.highcmd_msg, dict):
+                continue
+            else:
+                highcmd.mode = ROSBoardSocketHandler.highcmd_msg['mode']
+                highcmd.bodyHeight = ROSBoardSocketHandler.highcmd_msg['bodyHeight']
+                self.highcmd_pub.publish(highcmd)
 
     def pingpong_loop(self):
         """

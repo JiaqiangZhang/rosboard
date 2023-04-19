@@ -26,6 +26,7 @@ class NoCacheStaticFileHandler(tornado.web.StaticFileHandler):
 class ROSBoardSocketHandler(tornado.websocket.WebSocketHandler):
     sockets = set()
     joy_msg = None
+    highcmd_msg = None
     img_quality_msg = 50
 
     def initialize(self, node):
@@ -201,7 +202,9 @@ class ROSBoardSocketHandler(tornado.websocket.WebSocketHandler):
         # Joy
         elif argv[0] == ROSBoardSocketHandler.JOY_MSG:
             ROSBoardSocketHandler.joy_msg = argv[1]
-
+        # HighCmd
+        elif argv[0] == ROSBoardSocketHandler.HIGHCMD_MSG:
+            ROSBoardSocketHandler.highcmd_msg = argv[1]
         # image quality
         elif argv[0] == ROSBoardSocketHandler.IMG_QUALITY:
             # ROSBoardSocketHandler.img_quality_msg = argv[1]
@@ -221,4 +224,5 @@ ROSBoardSocketHandler.PONG_SEQ = "s";
 ROSBoardSocketHandler.PONG_TIME = "t";
 
 ROSBoardSocketHandler.JOY_MSG = "j";
+ROSBoardSocketHandler.HIGHCMD_MSG = "h";
 ROSBoardSocketHandler.IMG_QUALITY = "i";

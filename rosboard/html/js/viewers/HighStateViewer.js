@@ -29,7 +29,6 @@ class HighStateViewer extends Viewer {
 
   onData(data) {
       this.card.title.text(data._topic_name);
-        console.log(data)
       for(let field in data) {
         //   if(field[0] === "_") continue;
           // if(field === "header") continue;
