@@ -141,7 +141,7 @@ class ROSBoardNode(object):
         twist = Twist()
         while True:
             time.sleep(0.1)
-            if not isinstance(ROSBoardSocketHandler.joy_msg, dict):
+            if not (ROSBoardSocketHandler.joy_msg): # return False if joymsg is empty
                 continue
             if 'x' in ROSBoardSocketHandler.joy_msg and 'y' in ROSBoardSocketHandler.joy_msg:
                 twist.linear.x = -float(ROSBoardSocketHandler.joy_msg['y']) * 3.0
@@ -155,11 +155,13 @@ class ROSBoardNode(object):
         highcmd = HighCmd()
         while True:
             time.sleep(0.1)
-            if not isinstance(ROSBoardSocketHandler.highcmd_msg, dict):
+            if not (ROSBoardSocketHandler.highcmd_msg): # return False if highcmd_msg is empty
                 continue
             else:
-                highcmd.mode = ROSBoardSocketHandler.highcmd_msg['mode']
-                highcmd.bodyHeight = ROSBoardSocketHandler.highcmd_msg['bodyHeight']
+                print("[INFO] WebSocketTransport -> highcmd_msg = ",ROSBoardSocketHandler.highcmd_msg)
+                highcmd.mode = ROSBoardSocketHandler.highcmd_msg["mode"]
+                highcmd.bodyHeight = ROSBoardSocketHandler.highcmd_msg["bodyHeight"]
+                ROSBoardSocketHandler.highcmd_msg = {} # clear highcmd_msg 
                 self.highcmd_pub.publish(highcmd)
 
     def pingpong_loop(self):

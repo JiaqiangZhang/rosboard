@@ -68,6 +68,7 @@ class WebSocketV1Transport {
         //   ["x"]: that.joystickX.toFixed(3),
         //   ["y"]: that.joystickY.toFixed(3),}]));
 
+        
       }
     }
   
@@ -88,12 +89,11 @@ class WebSocketV1Transport {
       this.joystickY = joystickY;
     }
     update_highcmd({mode, bodyHeight}) {
-      console.log("sending high_cmd ...")
       this.mode = mode;
       this.bodyHeight = bodyHeight;
       this.ws.send(JSON.stringify([WebSocketV1Transport.HIGHCMD_MSG, {
-        ["mode"]: mode,
-        ["bodyHeight"]: bodyHeight
+        ["mode"]: this.mode,
+        ["bodyHeight"]: this.bodyHeight
       }]));
     }
   }
