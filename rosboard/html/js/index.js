@@ -83,6 +83,7 @@ let onPrefixedCard = function() {
   let preSubscriptions = {
     "/camera/rgb/image_raw": { topicType: "sensor_msgs/Image" }, 
     "/camera/depth/points": { topicType: "sensor_msgs/PointCloud2" }, 
+    "/husky/raw_cmd_vel" : { topicType: "geometry_msgs/Twist"},
   };
   // console.log("preSubscriptions", preSubscriptions);
 

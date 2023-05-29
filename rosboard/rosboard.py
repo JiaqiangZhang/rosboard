@@ -58,7 +58,7 @@ class ROSBoardNode(object):
             # ros2 docs don't explain why but we need this magic.
             self.sub_rosout = rospy.Subscriber("/rosout", Log, lambda x:x)
 
-        self.twist_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=100)
+        self.twist_pub = rospy.Publisher('/husky/raw_cmd_vel', Twist, queue_size=100)
 
         tornado_settings = {
             'debug': True,
@@ -138,6 +138,7 @@ class ROSBoardNode(object):
             if not isinstance(ROSBoardSocketHandler.joy_msg, dict):
                 continue
             if 'x' in ROSBoardSocketHandler.joy_msg and 'y' in ROSBoardSocketHandler.joy_msg:
+                # choose speed with the scaling factor (minimum 0.2, maximum 1.0)
                 twist.linear.x = -float(ROSBoardSocketHandler.joy_msg['y']) * 0.2
                 twist.angular.z = -float(ROSBoardSocketHandler.joy_msg['x']) * 0.2
             self.twist_pub.publish(twist)
