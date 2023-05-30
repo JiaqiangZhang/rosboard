@@ -18,6 +18,21 @@ class JoystickController extends Viewer {
       })
       .appendTo(this.viewer);
 
+    /** Slider to control joy stick control-speed */
+    this.slider = $('<input type="range" min="1" max="100" value="10" \
+      class="myslider" id="sliderRange"> <p>speed: <span id="demo"></span>%</p>')
+      .appendTo(this.card.content);
+    
+    var rangeslider = document.getElementById("sliderRange");
+    var output = document.getElementById("demo");
+    output.innerHTML = rangeslider.value;
+
+    rangeslider.oninput = function() {
+      let speed = this.value;
+      output.innerHTML = speed;
+      currentTransport.update_speed(speed);
+    }
+
     var options = {
         zone: document.getElementById(this.joyId),
         mode: 'semi',

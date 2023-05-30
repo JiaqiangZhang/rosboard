@@ -10,6 +10,7 @@ class WebSocketV1Transport {
       this.ws = null;
       this.joystickX = 0.0;
       this.joystickY = 0.0;
+      this.speed = 0.1;
     }
   
     connect() {
@@ -80,8 +81,11 @@ class WebSocketV1Transport {
     }
 
     update_joy({joystickX, joystickY}) {
-      this.joystickX = joystickX;
-      this.joystickY = joystickY;
+      this.joystickX = joystickX * this.speed;
+      this.joystickY = joystickY * this.speed;
+    }
+    update_speed(speed){
+      this.speed = speed * 0.01;
     }
   }
   

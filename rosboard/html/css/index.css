@@ -184,6 +184,34 @@ input, textarea, *[contenteditable=true] {
   transition: opacity 0.3s ease;
 }
 
+/* slider */
+.rangeslider{
+  width: 50%;
+}
+
+.myslider {
+  -webkit-appearance: none;
+  background: #FCF3CF  ;
+  width: 50%;
+  height: 20px;
+  opacity: 2;
+ }
+
+
+.myslider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  cursor: pointer;
+  background: #34495E  ;
+  width: 5%;
+  height: 20px;
+}
+
+
+.myslider:hover {
+  opacity: 1;
+}
+
+
 @media screen and (min-width: 900px) {
   .card {
     display:inline-block;
