@@ -59,7 +59,7 @@ class ROSBoardNode(object):
             # ros2 docs don't explain why but we need this magic.
             self.sub_rosout = rospy.Subscriber("/rosout", Log, lambda x:x)
 
-        self.twist_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=100)
+        self.twist_pub = rospy.Publisher('/dog/raw_cmd_vel', Twist, queue_size=1)
 
         self.highcmd_pub = rospy.Publisher('/high_cmd', HighCmd, queue_size=1)
 

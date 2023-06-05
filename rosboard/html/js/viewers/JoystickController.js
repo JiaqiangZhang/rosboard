@@ -52,6 +52,7 @@ JoystickController.friendlyName = "JoystickController";
 
 JoystickController.supportedTypes = [
     "geometry_msgs/msg/Twist",
+    "geometry_msgs/Twist"
 ];
 
 JoystickController.maxUpdateRate = 10.0;
