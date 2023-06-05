@@ -18,13 +18,14 @@ else:
 
 from geometry_msgs.msg import Twist
 from rosgraph_msgs.msg import Log
+from unitree_legged_msgs.msg import HighCmd
 
 from rosboard.serialization import ros2dict
 from rosboard.subscribers.dmesg_subscriber import DMesgSubscriber
 from rosboard.subscribers.processes_subscriber import ProcessesSubscriber
 from rosboard.subscribers.system_stats_subscriber import SystemStatsSubscriber
 from rosboard.subscribers.dummy_subscriber import DummySubscriber
-from rosboard.handlers import ROSBoardSocketHandler, NoCacheStaticFileHandler
+from rosboard.handlers import ROSBoardSocketHandler, NoCacheStaticFileHandler #, PostHandler
 
 class ROSBoardNode(object):
     instance = None
@@ -58,7 +59,9 @@ class ROSBoardNode(object):
             # ros2 docs don't explain why but we need this magic.
             self.sub_rosout = rospy.Subscriber("/rosout", Log, lambda x:x)
 
-        self.twist_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=100)
+        self.twist_pub = rospy.Publisher('/dog/raw_cmd_vel', Twist, queue_size=1)
+
+        self.highcmd_pub = rospy.Publisher('/high_cmd', HighCmd, queue_size=1)
 
         tornado_settings = {
             'debug': True,
@@ -96,6 +99,9 @@ class ROSBoardNode(object):
 
         # loop to send client joy message to ros topic
         threading.Thread(target = self.joy_loop, daemon = True).start()
+
+        # loop to send command message to ros topic /high_cmd
+        threading.Thread(target = self.highcmd_loop, daemon = True).start()
 
         self.lock = threading.Lock()
 
@@ -135,12 +141,28 @@ class ROSBoardNode(object):
         twist = Twist()
         while True:
             time.sleep(0.1)
-            if not isinstance(ROSBoardSocketHandler.joy_msg, dict):
+            if not (ROSBoardSocketHandler.joy_msg): # return False if joymsg is empty
                 continue
             if 'x' in ROSBoardSocketHandler.joy_msg and 'y' in ROSBoardSocketHandler.joy_msg:
                 twist.linear.x = -float(ROSBoardSocketHandler.joy_msg['y']) * 3.0
                 twist.angular.z = -float(ROSBoardSocketHandler.joy_msg['x']) * 2.0
             self.twist_pub.publish(twist)
+
+    def highcmd_loop(self):
+        """
+        Sending HighCmd message from client
+        """
+        highcmd = HighCmd()
+        while True:
+            time.sleep(0.1)
+            if not (ROSBoardSocketHandler.highcmd_msg): # return False if highcmd_msg is empty
+                continue
+            else:
+                print("[INFO] WebSocketTransport -> highcmd_msg = ",ROSBoardSocketHandler.highcmd_msg)
+                highcmd.mode = ROSBoardSocketHandler.highcmd_msg["mode"]
+                highcmd.bodyHeight = ROSBoardSocketHandler.highcmd_msg["bodyHeight"]
+                ROSBoardSocketHandler.highcmd_msg = {} # clear highcmd_msg 
+                self.highcmd_pub.publish(highcmd)
 
     def pingpong_loop(self):
         """
@@ -236,7 +258,7 @@ class ROSBoardNode(object):
                                 {
                                     "_topic_name": topic_name, # special non-ros topics start with _
                                     "_topic_type": topic_type,
-                                    "_error": "Could not load message type '%s'. Are the .msg files for it source-bashed?" % topic_type,
+                                    "_error": "Could not load message '{}' of type '{}'. Are the .msg files for it source-bashed?".format(topic_name,topic_type),
                                 },
                             ]
                         )

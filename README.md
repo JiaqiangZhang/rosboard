@@ -1,5 +1,14 @@
 # ROSboard 
 
+## Customize
+- Custom image encoding 
+Choose the encoding image dimension within the `compress_image()` and the crispy image within the `encode_jpeg()` function 
+
+- Custom point cloud subsample size
+Choose the number of sub-samples every scan within the `compress_point_cloud2()` function.
+
+--------
+
 ROS node that runs a web server on your robot.
 Run the node, point your web browser at http://your-robot-ip:8888/ and you get nice visualizations.
 

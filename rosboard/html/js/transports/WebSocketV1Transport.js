@@ -1,14 +1,17 @@
 class WebSocketV1Transport {
-    constructor({path, onOpen, onClose, onRosMsg, onTopics, onSystem}) {
+    constructor({path, onOpen, onClose, onRosMsg, onTopics, onSystem, onPrefixedCard}) {
       this.path = path;
       this.onOpen = onOpen ? onOpen.bind(this) : null;
       this.onClose = onClose ? onClose.bind(this) : null;
       this.onMsg = onMsg ? onMsg.bind(this) : null;
       this.onTopics = onTopics ? onTopics.bind(this) : null;
       this.onSystem = onSystem ? onSystem.bind(this) : null;
+      this.onPrefixedCard = onPrefixedCard ? onPrefixedCard.bind(this) : null;
       this.ws = null;
       this.joystickX = 0.0;
       this.joystickY = 0.0;
+      this.mode = 0;
+      this.bodyHeight = 0.0;
     }
   
     connect() {
@@ -19,9 +22,16 @@ class WebSocketV1Transport {
   
       this.ws = new WebSocket(abspath);
   
+      // this.ws.onopen = function(){
+      //   console.log("connected");
+      //   // console.log("that", that.onPrefixedCard(that))
+      //   // if(that.onPrefixedCard) that.onPrefixedCard(that);
+      //   if(that.onOpen) that.onOpen(that);
+      // }
+
       this.ws.onopen = function(){
         console.log("connected");
-        if(that.onOpen) that.onOpen(that);
+        if(that.onPrefixedCard) that.onPrefixedCard(that);
       }
       
       this.ws.onclose = function(){
@@ -51,11 +61,14 @@ class WebSocketV1Transport {
         else if(wsMsgType === WebSocketV1Transport.MSG_MSG && that.onMsg) that.onMsg(data[1]);
         else if(wsMsgType === WebSocketV1Transport.MSG_TOPICS && that.onTopics) that.onTopics(data[1]);
         else if(wsMsgType === WebSocketV1Transport.MSG_SYSTEM && that.onSystem) that.onSystem(data[1]);
+        
         else console.log("received unknown message: " + wsmsg.data);
 
-        this.send(JSON.stringify([WebSocketV1Transport.JOY_MSG, {
-          ["x"]: that.joystickX.toFixed(3),
-          ["y"]: that.joystickY.toFixed(3),}]));
+        // this.send(JSON.stringify([WebSocketV1Transport.JOY_MSG, {
+        //   ["x"]: that.joystickX.toFixed(3),
+        //   ["y"]: that.joystickY.toFixed(3),}]));
+
+        
       }
     }
   
@@ -75,6 +88,14 @@ class WebSocketV1Transport {
       this.joystickX = joystickX;
       this.joystickY = joystickY;
     }
+    update_highcmd({mode, bodyHeight}) {
+      this.mode = mode;
+      this.bodyHeight = bodyHeight;
+      this.ws.send(JSON.stringify([WebSocketV1Transport.HIGHCMD_MSG, {
+        ["mode"]: this.mode,
+        ["bodyHeight"]: this.bodyHeight
+      }]));
+    }
   }
   
   WebSocketV1Transport.MSG_PING = "p";
@@ -90,3 +111,5 @@ class WebSocketV1Transport {
   WebSocketV1Transport.PONG_TIME = "t";
 
   WebSocketV1Transport.JOY_MSG = "j";
+  WebSocketV1Transport.HIGHCMD_MSG = "h"
+  WebSocketV1Transport.IMG_QUALITY = "i";

@@ -2,7 +2,7 @@ import base64
 import io
 import numpy as np
 from rosboard.cv_bridge import imgmsg_to_cv2
-
+import time
 try:
     import simplejpeg
 except ImportError:
@@ -28,31 +28,33 @@ def decode_jpeg(input_bytes):
         return np.asarray(Image.open(io.BytesIO(input_bytes)))
 
 def encode_jpeg(img):
+    # use img_quality to change image quality between 0 and 100
+    __img_quality__ = 50
     if simplejpeg:
         if len(img.shape) == 2:
             img = np.expand_dims(img, axis=2)
             if not img.flags['C_CONTIGUOUS']:
                 img = img.copy(order='C')
-            return simplejpeg.encode_jpeg(img, colorspace = "GRAY", quality = 50)
+            return simplejpeg.encode_jpeg(img, colorspace = "GRAY", quality = img_quality)
         elif len(img.shape) == 3:
             if not img.flags['C_CONTIGUOUS']:
                 img = img.copy(order='C')
             if img.shape[2] == 1:
-                return simplejpeg.encode_jpeg(img, colorspace = "GRAY", quality = 50)
+                return simplejpeg.encode_jpeg(img, colorspace = "GRAY", quality = img_quality)
             elif img.shape[2] == 4:
-                return simplejpeg.encode_jpeg(img, colorspace = "RGBA", quality = 50)
+                return simplejpeg.encode_jpeg(img, colorspace = "RGBA", quality = img_quality)
             elif img.shape[2] == 3:
-                return simplejpeg.encode_jpeg(img, colorspace = "RGB", quality = 50)
+                return simplejpeg.encode_jpeg(img, colorspace = "RGB", quality = img_quality)
         else:
             return b''
     elif cv2:
         if len(img.shape) == 3 and img.shape[2] == 3:
             img = img[:,:,::-1]
-        return cv2.imencode('.jpg', img, [cv2.IMWRITE_JPEG_QUALITY, 50])[1].tobytes()
+        return cv2.imencode('.jpg', img, [cv2.IMWRITE_JPEG_QUALITY, img_quality])[1].tobytes()
     elif PIL:
         pil_img = Image.fromarray(img)
         buffered = io.BytesIO()
-        pil_img.save(buffered, format="JPEG", quality = 50)    
+        pil_img.save(buffered, format="JPEG", quality = img_quality)    
         return buffered.getvalue()
 
 _PCL2_DATATYPES_NUMPY_MAP = {
@@ -150,9 +152,8 @@ def compress_compressed_image(msg, output):
         output["_error"] = "Error: %s" % str(e)
     output["_data_jpeg"] = base64.b64encode(img_jpeg).decode()
     output["_data_shape"] = list(original_shape)
-            
 
-def compress_image(msg, output):
+def compress_image(msg, output, max_height = 800, max_width = 800):
     output["data"] = []
     output["__comp"] = ["data"]
 
@@ -173,8 +174,9 @@ def compress_image(msg, output):
         cv2_img = np.stack((cv2_img[:,:,0], cv2_img[:,:,1], np.zeros(cv2_img[:,:,0].shape)), axis = -1)
 
     # enforce <800px max dimension, and do a stride-based resize
-    if cv2_img.shape[0] > 800 or cv2_img.shape[1] > 800:
-        stride = int(np.ceil(max(cv2_img.shape[0] / 800.0, cv2_img.shape[1] / 800.0)))
+    # Edit: choose a smaller dimension for quicker encoding and larger dimension vice versa.
+    if cv2_img.shape[0] > max_height or cv2_img.shape[1] > max_width:
+        stride = int(np.ceil(max(cv2_img.shape[0] / max_height*1.0, cv2_img.shape[1] / max_width*1.0)))
         cv2_img = cv2_img[::stride,::stride]
     
     # if image format isn't already uint8, make it uint8 for visualization purposes
@@ -193,8 +195,13 @@ def compress_image(msg, output):
             cv2_img = np.clip(cv2_img * 255, 0, 255).astype(np.uint8)
 
     try:
+        start = time.time()
         img_jpeg = encode_jpeg(cv2_img)
+        
+        end = time.time()
+        output["_warn"] = "encodejpeg elapsed = " + str(end - start) + "sec"
         output["_data_jpeg"] = base64.b64encode(img_jpeg).decode()
+        output["_warn"] += "\nlength of encoded jpeg string = " + str(len(base64.b64encode(img_jpeg).decode()))
         output["_data_shape"] = original_shape
     except OSError as e:
         output["_error"] = str(e)    
@@ -221,7 +228,10 @@ def compress_occupancy_grid(msg, output):
     except Exception as e:
         output["_error"] = str(e)
     try:
+        start = time.time()
         img_jpeg = encode_jpeg(cv2_img)
+        end = time.time()
+        output["_warn"] = (end - start)
         output["_data_jpeg"] = base64.b64encode(img_jpeg).decode()
     except OSError as e:
         output["_error"] = str(e)
@@ -237,7 +247,8 @@ DATATYPE_MAPPING_PCL2_NUMPY = {
     8: np.float64,
 }
 
-def compress_point_cloud2(msg, output):
+def compress_point_cloud2(msg, output, sample_size = 65535):
+    # sample_size (int): custom sample size, default 65535
     # assuming fields are ('x', 'y', 'z', ...),
     # compression scheme is:
     # msg['_data_uint16'] = {
@@ -248,6 +259,13 @@ def compress_point_cloud2(msg, output):
     # i.e. we are encoding all the floats as uint16 values where 0 represents the min value in the entire dataset and
     # 65535 represents the max value in the dataset, and bounds: [...] holds information on those bounds so the
     # client can decode back to a float
+
+    ### EDIT: CUSTOM COMPRESSION
+    # choose point cloud sample size
+
+    if (sample_size < 0):
+        output["_warn"] = "sample size < 0, set to default 65535"
+        sample_size = 65535
 
     output["data"] = []
     output["__comp"] = ["data"]
@@ -268,9 +286,9 @@ def compress_point_cloud2(msg, output):
     except AssertionError as e:
         output["_error"] = "PointCloud2 error: %s" % str(e)
     
-    if points.size > 65536:
-        output["_warn"] = "Point cloud too large, randomly subsampling to 65536 points."
-        idx = np.random.randint(points.size, size=65536)
+    if points.size > sample_size:
+        output["_warn"] = "Point cloud too large, randomly subsampling to {} points.".format(sample_size)
+        idx = np.random.randint(points.size, size=sample_size)
         points = points[idx]
 
     xpoints = points['x'].astype(np.float32)

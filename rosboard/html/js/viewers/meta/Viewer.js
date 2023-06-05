@@ -28,7 +28,7 @@ class Viewer {
     card.title = $('<div></div>').addClass('card-title').text("Waiting for data ...").appendTo(card);
 
     // card content div
-    card.content = $('<div></div>').addClass('card-content').text('').appendTo(card);
+    card.content = $('<div style="min-width: 720px"></div>').addClass('card-content').text('').appendTo(card);
 
     // card pause button
     let menuId = 'menu-' + Math.floor(Math.random() * 1e6);
@@ -56,10 +56,13 @@ class Viewer {
     for(let i in viewers) {
       let item = $('<li ' + (viewers[i].name === this.constructor.name ? 'disabled' : '') + ' class="mdl-menu__item">' + viewers[i].friendlyName + '</li>').appendTo(this.card.menu);
       let that = this;
-      item.click(() => { Viewer.onSwitchViewer(that, viewers[i]); });
+      item.click(() => { Viewer.onSwitchViewer(that, viewers[i]); console.log(viewers[i]); });
     }
 
     componentHandler.upgradeAllRegistered();
+
+    // card pin it button
+    // card.pinitButton
 
     // card pause button
     card.pauseButton = $('<button></button>')

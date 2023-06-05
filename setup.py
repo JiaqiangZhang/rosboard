@@ -29,8 +29,8 @@ setup(
         ]
     },
     #zip_safe=True,
-    maintainer='dheera',
-    maintainer_email='dheera.r.e.m.o.v.e.t.h.i.s@dheera.net',
+    maintainer=['jiaqiang', 'minh'],
+    maintainer_email=['jizhan@utu.fi', 'mhnguy@utu.fi'],
     description='ROS node that turns your robot into a web server to visualize ROS topics',
     license='BSD',
     tests_require=['pytest'],

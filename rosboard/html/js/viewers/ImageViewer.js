@@ -55,12 +55,13 @@ class ImageViewer extends Viewer {
 
   onData(msg) {
     this.card.title.text(msg._topic_name);
-
+    console.time("image Viewer")
     if(msg.__comp) {
       this.decodeAndRenderCompressed(msg);
     } else {
       this.decodeAndRenderUncompressed(msg);
     }
+    console.timeEnd("image Viewer")
   }
   
   decodeAndRenderCompressed(msg) {

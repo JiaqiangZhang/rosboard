@@ -38,7 +38,7 @@ def ros2dict(msg):
         if (msg.__module__ == "sensor_msgs.msg._Image" or \
             msg.__module__ == "sensor_msgs.msg._image") \
             and field == "data":
-            rosboard.compression.compress_image(msg, output)
+            rosboard.compression.compress_image(msg, output, max_height=800, max_width=800)
             continue
 
         # OccupancyGrid: render and compress to jpeg
@@ -63,7 +63,7 @@ def ros2dict(msg):
         if (msg.__module__ == "sensor_msgs.msg._PointCloud2" or \
             msg.__module__ == "sensor_msgs.msg._point_cloud2") \
             and field == "data":
-            rosboard.compression.compress_point_cloud2(msg, output)
+            rosboard.compression.compress_point_cloud2(msg, output, sample_size=1000)
             continue
 
         value = getattr(msg, field)
